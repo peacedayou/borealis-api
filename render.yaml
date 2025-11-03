@@ -1,0 +1,9 @@
+services:
+  - type: web
+    name: borealis-api
+    env: python
+    buildCommand: pip install -r requirements.txt
+    startCommand: gunicorn project.wsgi:application
+    envVars:
+      - key: DJANGO_SETTINGS_MODULE
+        value: project.settings

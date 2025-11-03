@@ -1,0 +1,8 @@
+Django>=4.2
+djangorestframework
+drf-yasg
+graphene-django
+mysqlclient
+django-bootstrap5
+requests
+graphene

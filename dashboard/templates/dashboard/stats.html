@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Statistiques</title>
+</head>
+<body>
+    <h1>Statistiques des jeux moissonnés</h1>
+    <p>Total : {{ total }}</p>
+    <ul>
+        {% for item in by_source %}
+            <li>{{ item.source }} : {{ item.count }}</li>
+        {% endfor %}
+    </ul>
+</body>
+</html>

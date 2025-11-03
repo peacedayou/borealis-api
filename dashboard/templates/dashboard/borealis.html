@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Jeux de données Borealis – David Deslauriers</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body class="container py-5">
+    <h1 class="mb-4">📚 Jeux de données – David Deslauriers</h1>
+
+    <!-- Barre de recherche -->
+    <form method="get" class="input-group mb-4">
+        <input type="text" name="q" class="form-control" placeholder="🔍 Rechercher par mot-clé..." value="{{ query }}">
+        <button type="submit" class="btn btn-primary">Rechercher</button>
+    </form>
+
+    <!-- Résultats -->
+    {% if datasets %}
+        <div class="row">
+            {% for dataset in datasets %}
+                <div class="col-md-6 mb-4">
+                    <div class="card h-100 shadow-sm">
+                        <div class="card-body">
+                            <h5 class="card-title">{{ dataset.title }}</h5>
+                            <p class="card-text"><strong>Auteurs :</strong> {{ dataset.authors }}</p>
+                            <p class="card-text"><strong>DOI :</strong> {{ dataset.doi }}</p>
+                            <p class="card-text">{{ dataset.description|truncatewords:30 }}</p>
+                            <a href="{{ dataset.url }}" class="btn btn-outline-primary" target="_blank">Accéder au jeu</a>
+                        </div>
+                        <div class="card-footer text-muted">
+                            Publié le {{ dataset.publication_date }}
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <div class="alert alert-warning">
+            Aucun jeu de données trouvé pour le mot-clé <strong>"{{ query }}"</strong>.
+        </div>
+    {% endif %}
+</body>
+</html>
