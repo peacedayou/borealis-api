@@ -1,7 +1,8 @@
 from django.shortcuts import render, redirect
-from harvest.models import Dataset, BorealisDataset
+from harvest.models import BorealisDataset
 from django.db.models import Count
-from django.views.decorators.csrf import csrf_exempt
+from django.contrib.admin.views.decorators import staff_member_required
+from django.views.decorators.http import require_POST
 from harvest.tasks import run_all_sources
 
 def home_view(request):
@@ -16,25 +17,16 @@ def stats_view(request):
     })
 
 
-@csrf_exempt
+@staff_member_required
+@require_POST
 def moissonner_view(request):
-    if request.method == 'POST':
-        run_all_sources()
-        return redirect('home')
+    run_all_sources()
+    return redirect('home')
 
 
 def borealis_view(request):
     query = request.GET.get('q', '')
-    if query:
-        datasets = BorealisDataset.objects.filter(
-            title__icontains=query
-        ) | BorealisDataset.objects.filter(
-            description__icontains=query
-        ) | BorealisDataset.objects.filter(
-            keywords__icontains=query
-        )
-    else:
-        datasets = BorealisDataset.objects.all()
+    datasets = BorealisDataset.search(query)
     return render(request, 'dashboard/borealis.html', {
         'datasets': datasets,
         'query': query

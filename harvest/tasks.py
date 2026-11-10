@@ -1,46 +1,27 @@
-import requests
-from .models import Dataset
+import logging
 
-BOREALIS_URL = "https://borealisdata.ca"
-DATAVERSE_ID = "daviddeslauriers"
+from .borealis import fetch_datasets
+from .models import BorealisDataset
 
-def fetch_borealis_data(limit=10):
+logger = logging.getLogger(__name__)
+
+
+def fetch_borealis_data(limit=None):
+    """Moissonne Borealis et enregistre les jeux de données (clé : DOI).
+
+    Retourne le nombre de jeux de données créés ou mis à jour.
+    """
     try:
-        list_url = f"{BOREALIS_URL}/api/dataverses/{DATAVERSE_ID}/contents"
-        response = requests.get(list_url)
-        response.raise_for_status()
-        items = response.json().get("data", [])[:limit]
+        datasets = fetch_datasets(limit=limit)
+    except Exception:
+        logger.exception("Erreur lors du moissonnage Borealis")
+        return 0
 
-        for item in items:
-            if item["type"] != "dataset":
-                continue
+    for data in datasets:
+        doi = data.pop("doi")
+        BorealisDataset.objects.update_or_create(doi=doi, defaults=data)
+    return len(datasets)
 
-            doi = item["identifier"]
-            meta_url = f"{BOREALIS_URL}/api/datasets/:persistentId/?persistentId={doi}"
-            meta = requests.get(meta_url)
-            if meta.status_code != 200:
-                continue
-
-            citation = meta.json()["data"]["latestVersion"]["metadataBlocks"]["citation"]["fields"]
-
-            def get_field(name):
-                for field in citation:
-                    if field["typeName"] == name:
-                        return field.get("value", "")
-                return ""
-
-            Dataset.objects.update_or_create(
-                title=get_field("title"),
-                defaults={
-                    "description": get_field("dsDescription")[0]["dsDescriptionValue"]["value"] if get_field("dsDescription") else "",
-                    "source": "Boréalis",
-                    "keywords": get_field("keyword"),
-                    "theme": "",  # Pas de thème dans Borealis
-                    "producer": ", ".join(a["authorName"]["value"] for a in get_field("author")) if get_field("author") else "",
-                }
-            )
-    except Exception as e:
-        print(f"Erreur lors du moissonnage Borealis : {e}")
 
 def run_all_sources():
-    fetch_borealis_data()
+    return fetch_borealis_data()

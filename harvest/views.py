@@ -10,13 +10,6 @@ class BorealisDatasetViewSet(viewsets.ModelViewSet):
 
     @action(detail=False, methods=['get'])
     def search(self, request):
-        keyword = request.query_params.get('q', '')
-        results = BorealisDataset.objects.filter(
-            title__icontains=keyword
-        ) | BorealisDataset.objects.filter(
-            description__icontains=keyword
-        ) | BorealisDataset.objects.filter(
-            keywords__icontains=keyword
-        )
+        results = BorealisDataset.search(request.query_params.get('q', ''))
         serializer = self.get_serializer(results, many=True)
         return Response(serializer.data)
