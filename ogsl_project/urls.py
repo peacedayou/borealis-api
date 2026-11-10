@@ -37,7 +37,6 @@ urlpatterns = [
     path('graphql/', include('api_graphql.urls')),
     path('', include('dashboard.urls')),
     path('auth/', include('users.urls')),
-    path('dashboard', include('dashboard.urls')),
 
     # Swagger
     path('swagger/', schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'),

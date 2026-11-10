@@ -2,8 +2,8 @@ from django.core.management.base import BaseCommand
 from harvest.tasks import run_all_sources
 
 class Command(BaseCommand):
-    help = "Moissonne les données CKAN depuis les sources définies"
+    help = "Moissonne les jeux de données Borealis et les enregistre en base"
 
     def handle(self, *args, **kwargs):
-        run_all_sources()
-        self.stdout.write(self.style.SUCCESS("Moissonnage terminé avec succès."))
+        count = run_all_sources()
+        self.stdout.write(self.style.SUCCESS(f"Moissonnage terminé : {count} jeu(x) de données."))

@@ -2,8 +2,22 @@ services:
   - type: web
     name: borealis-api
     env: python
-    buildCommand: pip install -r requirements.txt
-    startCommand: gunicorn project.wsgi:application
+    buildCommand: pip install -r requirements.txt && python manage.py collectstatic --noinput && python manage.py migrate
+    startCommand: gunicorn ogsl_project.wsgi:application
     envVars:
       - key: DJANGO_SETTINGS_MODULE
-        value: project.settings
+        value: ogsl_project.settings
+      - key: DJANGO_SECRET_KEY
+        generateValue: true
+      - key: DJANGO_DEBUG
+        value: "False"
+      - key: DJANGO_ALLOWED_HOSTS
+        value: borealis-api.onrender.com
+      - key: DB_NAME
+        sync: false
+      - key: DB_USER
+        sync: false
+      - key: DB_PASSWORD
+        sync: false
+      - key: DB_HOST
+        sync: false

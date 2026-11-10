@@ -23,5 +23,17 @@ class BorealisDataset(models.Model):
     publication_date = models.DateField(null=True, blank=True)
     url = models.URLField()
 
+    @classmethod
+    def search(cls, query=None):
+        """Recherche plein texte simple sur le titre, la description et les mots-clés."""
+        qs = cls.objects.all()
+        if query:
+            qs = qs.filter(
+                models.Q(title__icontains=query)
+                | models.Q(description__icontains=query)
+                | models.Q(keywords__icontains=query)
+            )
+        return qs.distinct()
+
     def __str__(self):
         return self.title
