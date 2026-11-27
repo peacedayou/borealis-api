@@ -1,8 +1,9 @@
-Django>=4.2,<6
-djangorestframework
-drf-yasg
-graphene-django
-mysqlclient
-django-bootstrap5
-requests
-gunicorn
+# Versions bornees : correctifs de securite acceptes, pas de saut de version majeure.
+Django>=5.2.19,<5.3
+djangorestframework>=3.18.3,<3.19
+drf-yasg>=1.21.18,<1.22
+graphene-django>=3.2.3,<3.3
+mysqlclient>=2.2,<2.4
+django-bootstrap5>=24.3,<27
+requests>=2.34.2,<3
+gunicorn>=23,<28
